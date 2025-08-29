@@ -221,7 +221,7 @@
 <body>
 
 <h1>Naptha AI Agent Demo</h1>
-<h2>Select an agent persona and interact with your code assistant in real time. Responses emulate a coding terminal.</h2>
+<h2>Select an agent persona and interact with your code assistant. Responses appear instantly below.</h2>
 
 <div class="container">
   <input type="password" id="apiKey" placeholder="🔑 Enter your Gemini API Key here" />
@@ -249,9 +249,9 @@ async function askAI() {
   if (!apiKey) { output.textContent = "⚠️ Please enter your Gemini API key."; return; }
   if (!input) { output.textContent = "⚠️ Please enter a prompt."; return; }
 
-  output.textContent = "Initializing " + role + "... 🤖\n";
+  output.textContent = `Initializing ${role}... 🤖\n`;
 
-  const prompt = `You are a ${role}. ${input}`;
+  const prompt = `You are a ${role}. Please answer clearly and concisely. Explain code snippets in plain text, preserving code formatting when necessary. User input: ${input}`;
 
   try {
     const response = await fetch(
@@ -266,17 +266,9 @@ async function askAI() {
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ No response received.";
 
-    // Streaming typing effect
-    let i = 0;
-    output.textContent += "\n";
-    function typeWriter() {
-      if (i < text.length) {
-        output.textContent += text.charAt(i);
-        i++;
-        setTimeout(typeWriter, 25);
-      }
-    }
-    typeWriter();
+    // Show full response instantly
+    output.textContent += "\n" + text;
+
   } catch (err) {
     output.textContent += "\n❌ Error: " + err.message;
   }
